@@ -41,7 +41,7 @@ export function SensorCard({ nodeId, moisture, temperature, humidity }: SensorCa
             <h3 className="text-lg font-semibold text-gray-800">
               {nodeId.replace('_', ' ')}
             </h3>
-            <p className="text-sm text-gray-500">Living Room</p>
+            <p className="text-sm text-gray-500">Plant {nodeId.replace('Node_', '')}</p>
           </div>
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${condition.color}`}>
             {condition.label}

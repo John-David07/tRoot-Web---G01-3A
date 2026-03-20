@@ -92,7 +92,7 @@ export default function SensorDetailPage() {
       <h1 className="text-2xl font-bold text-gray-900 mb-2">
         Sensor {sensor.nodeId.replace('_', ' ')}
       </h1>
-      <p className="text-gray-50 mb-6">Living Room</p>
+      
 
       {/* Current State Card */}
       <div className="bg-white rounded-lg shadow-md p-6 border border-green-400 shadow-green-200 mb-6">
