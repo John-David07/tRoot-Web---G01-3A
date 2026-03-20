@@ -65,24 +65,24 @@ export default function SensorDetailPage() {
       <Link href="/" className="text-green-600 mb-4 inline-block">
       ← Back to Dashboard
       </Link>
-      <p className="text-gray-600 mb-6">Living Room</p>
+      <p className="text-gray-50 mb-6">Living Room</p>
 
       {/* Current State Card */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+      <div className="bg-white rounded-lg shadow-md p-6 border border-green-400 shadow-green-200 mb-6">
         <h2 className="text-lg font-semibold mb-4">Current State</h2>
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
+          <div className="text-center p-4 bg-gray-200 rounded-lg">
             <div className="text-3xl font-bold text-gray-900">{sensor.moisture}%</div>
             <div className="text-sm text-gray-500">Soil Moisture</div>
             <div className={`text-sm font-medium mt-1 ${condition.color}`}>
               {condition.label}
             </div>
           </div>
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
+          <div className="text-center p-4 bg-gray-200 rounded-lg">
             <div className="text-3xl font-bold text-gray-900">{sensor.temperature}°C</div>
             <div className="text-sm text-gray-500">Temperature</div>
           </div>
-          <div className="text-center p-4 bg-gray-50 rounded-lg">
+          <div className="text-center p-4 bg-gray-200 rounded-lg">
             <div className="text-3xl font-bold text-gray-900">{sensor.humidity}%</div>
             <div className="text-sm text-gray-500">Humidity</div>
           </div>
@@ -90,7 +90,7 @@ export default function SensorDetailPage() {
       </div>
 
       {/* Live Moisture Tracking Graph */}
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white rounded-lg shadow-md p-6 border border-green-400 shadow-green-200 shadow-md p-6 mb-15">
         <h2 className="text-lg font-semibold mb-4">Live Moisture Tracking</h2>
         <p className="text-sm text-gray-500 mb-4">Last 15 minutes</p>
         <ResponsiveContainer width="100%" height={300}>

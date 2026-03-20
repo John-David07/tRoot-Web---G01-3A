@@ -35,7 +35,7 @@ export function SensorCard({ nodeId, moisture, temperature, humidity }: SensorCa
 
   return (
     <Link href={`/sensors/${nodeId}`}>
-      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-100 cursor-pointer hover:shadow-lg transition-shadow">
+      <div className="bg-white rounded-lg shadow-md p-6 border border-green-400 shadow-green-200 cursor-pointer hover:shadow-lg transition-shadow">
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="text-lg font-semibold text-gray-800">

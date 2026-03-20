@@ -8,8 +8,8 @@
   --primary-light: #E8F5E9;
   --warning: #FF9800;
   --danger: #F44336;
-  --background: #F5F7FA;
-  --card-bg: #FFFFFF;
+  --background: #153239 !important;
+  --card-bg: #ffffff;
 }
 
 @theme inline {
@@ -19,12 +19,12 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+/*@media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+}*/
 
 body {
   background-color: var(--background);

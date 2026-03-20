@@ -29,7 +29,7 @@ export function SmartInsight({ temperature, humidity }: SmartInsightProps) {
     : 'bg-yellow-50 border-yellow-200 text-yellow-700';
 
   return (
-    <div className={`rounded-lg border p-4 ${colors}`}>
+    <div className={`rounded-lg shadow-md p-4 border border-green-400 shadow-green-200 border p-4 ${colors}`}>
       <h3 className="font-semibold mb-1">Smart Insight</h3>
       <p className="text-sm">{insight.message}</p>
     </div>

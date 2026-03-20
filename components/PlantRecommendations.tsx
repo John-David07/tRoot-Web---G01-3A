@@ -77,7 +77,7 @@ export function PlantRecommendations({ humidity }: PlantRecommendationsProps) {
         {recommendations.map((plant) => (
           <div
             key={plant.name}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border border-gray-200 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 border border-green-400 shadow-green-200"
           >
             <div className="flex items-start gap-3">
               <span className="text-3xl">{plant.icon}</span>

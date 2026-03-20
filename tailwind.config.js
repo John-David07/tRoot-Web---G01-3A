@@ -14,7 +14,7 @@ module.exports = {
         danger: '#F44336',
       },
       backgroundColor: {
-        app: '#F5F7FA',
+        app: '#f5f7fa',
       },
     },
   },
