@@ -10,19 +10,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { name: 'Home', path: '/', icon: '🏠' },
-    { name: 'Sensors', path: '/sensors', icon: '📊' },
+    /*{ name: 'Sensors', path: '/sensors', icon: '📊' },*/
     { name: 'History', path: '/history', icon: '📅' },
     { name: 'Settings', path: '/settings', icon: '⚙️' },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8 pb-24">
         {children}
       </div>
       
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+      <nav className="justify bottom-0 left-0 right-0 bg-grey dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4">
           <div className="flex justify-around py-3">
             {navItems.map((item) => (

@@ -90,7 +90,7 @@ export default function SensorDetailPage() {
       </div>
 
       {/* Live Moisture Tracking Graph */}
-      <div className="bg-white rounded-lg shadow-md p-6 border border-green-400 shadow-green-200 shadow-md p-6 mb-15">
+      <div className="bg-white rounded-lg shadow-md p-6 border border-green-400 shadow-green-200 shadow-md p-6">
         <h2 className="text-lg font-semibold mb-4">Live Moisture Tracking</h2>
         <p className="text-sm text-gray-500 mb-4">Last 15 minutes</p>
         <ResponsiveContainer width="100%" height={300}>
