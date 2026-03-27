@@ -14,10 +14,28 @@ interface PlantRecommendationsProps {
   humidity: number;
 }
 
+const FALLBACK_PLANTS: Plant[] = [
+  {
+    name: "Snake Plant",
+    scientificName: "Sansevieria trifasciata",
+    reason: "Extremely adaptable and tolerates a wide range of conditions."
+  },
+  {
+    name: "ZZ Plant",
+    scientificName: "Zamioculcas zamiifolia",
+    reason: "Survives in low light and irregular watering schedules."
+  },
+  {
+    name: "Pothos",
+    scientificName: "Epipremnum aureum",
+    reason: "Very forgiving plant that adapts to most indoor environments."
+  }
+];
+
 export function PlantRecommendations({ moisture, temperature, humidity }: PlantRecommendationsProps) {
-  const [recommendations, setRecommendations] = useState<Plant[]>([]);
+  const [recommendations, setRecommendations] = useState<Plant[]>(FALLBACK_PLANTS);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [isAiMode, setIsAiMode] = useState(true);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
@@ -30,11 +48,20 @@ export function PlantRecommendations({ moisture, temperature, humidity }: PlantR
         });
         
         const data = await res.json();
-        setRecommendations(data.recommendations);
-        setError(false);
+        
+        // Check if we got valid AI recommendations
+        if (res.ok && data.recommendations && Array.isArray(data.recommendations) && data.recommendations.length > 0) {
+          setRecommendations(data.recommendations);
+          setIsAiMode(true);
+        } else {
+          // API returned error or invalid data - use fallback
+          setRecommendations(FALLBACK_PLANTS);
+          setIsAiMode(false);
+        }
       } catch (err) {
         console.error('Failed to fetch recommendations:', err);
-        setError(true);
+        setRecommendations(FALLBACK_PLANTS);
+        setIsAiMode(false);
       } finally {
         setLoading(false);
       }
@@ -52,25 +79,6 @@ export function PlantRecommendations({ moisture, temperature, humidity }: PlantR
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
           <p className="text-gray-500">Analyzing conditions...</p>
           <p className="text-sm text-gray-400 mt-2">AI is finding the best plants for you</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || recommendations.length === 0) {
-    return (
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-          Plant Recommendations
-        </h2>
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <p className="text-gray-600">Based on current conditions:</p>
-          <ul className="mt-3 space-y-2">
-            <li>🌿 Snake Plant - Tolerates a wide range of conditions</li>
-            <li>🌿 ZZ Plant - Survives with minimal care</li>
-            <li>🌿 Pothos - Adaptable to most indoor environments</li>
-          </ul>
-          <p className="text-sm text-gray-400 mt-4">AI recommendations temporarily unavailable</p>
         </div>
       </div>
     );
@@ -105,7 +113,9 @@ export function PlantRecommendations({ moisture, temperature, humidity }: PlantR
         ))}
       </div>
       <p className="text-xs text-gray-400 mt-4 text-center">
-        AI-powered recommendations based on current sensor readings
+        {isAiMode 
+          ? "AI-powered recommendations based on current sensor readings"
+          : "Using default recommendations (AI service temporarily unavailable)"}
       </p>
     </div>
   );
