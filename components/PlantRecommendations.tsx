@@ -14,6 +14,16 @@ interface PlantRecommendationsProps {
   humidity: number;
 }
 
+interface CachedRecommendations {
+  data: Plant[];
+  timestamp: number;
+  conditions: {
+    moisture: number;
+    temperature: number;
+    humidity: number;
+  };
+}
+
 const FALLBACK_PLANTS: Plant[] = [
   {
     name: "Snake Plant",
@@ -32,6 +42,9 @@ const FALLBACK_PLANTS: Plant[] = [
   }
 ];
 
+const CACHE_KEY = 'plant_recommendations';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 export function PlantRecommendations({ moisture, temperature, humidity }: PlantRecommendationsProps) {
   const [recommendations, setRecommendations] = useState<Plant[]>(FALLBACK_PLANTS);
   const [loading, setLoading] = useState(true);
@@ -41,6 +54,28 @@ export function PlantRecommendations({ moisture, temperature, humidity }: PlantR
     const fetchRecommendations = async () => {
       try {
         setLoading(true);
+        
+        // Check cache first
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const cachedData: CachedRecommendations = JSON.parse(cached);
+          const isExpired = Date.now() - cachedData.timestamp > CACHE_DURATION;
+          const conditionsChanged = 
+            cachedData.conditions.moisture !== moisture ||
+            cachedData.conditions.temperature !== temperature ||
+            cachedData.conditions.humidity !== humidity;
+          
+          // Use cache if not expired AND conditions haven't changed
+          if (!isExpired && !conditionsChanged) {
+            console.log('Using cached recommendations');
+            setRecommendations(cachedData.data);
+            setIsAiMode(true);
+            setLoading(false);
+            return;
+          }
+        }
+        
+        // Fetch new recommendations
         const res = await fetch('/api/recommendations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -53,8 +88,16 @@ export function PlantRecommendations({ moisture, temperature, humidity }: PlantR
         if (res.ok && data.recommendations && Array.isArray(data.recommendations) && data.recommendations.length > 0) {
           setRecommendations(data.recommendations);
           setIsAiMode(true);
+          
+          // Save to cache
+          const cacheData: CachedRecommendations = {
+            data: data.recommendations,
+            timestamp: Date.now(),
+            conditions: { moisture, temperature, humidity }
+          };
+          localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
         } else {
-          // API returned error or invalid data - use fallback
+          // API returned error - use fallback
           setRecommendations(FALLBACK_PLANTS);
           setIsAiMode(false);
         }
