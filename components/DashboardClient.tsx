@@ -61,7 +61,11 @@ export default function DashboardClient() {
         ))}
       </div>
 
-      <PlantRecommendations humidity={data.Humidity} />
+      <PlantRecommendations 
+        moisture={data.Soil_Moisture?.Node_1 || 0}  // Use first sensor's moisture
+        temperature={data.Temperature}
+        humidity={data.Humidity}
+      />
     </div>
   );
 }
