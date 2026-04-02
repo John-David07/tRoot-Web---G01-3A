@@ -44,10 +44,12 @@ export function PlantCarousel({ sensors }: PlantCarouselProps) {
           <CircularProgress value={currentSensor.moisture} label="Moisture" />
           <div className="grid grid-cols-2 gap-4 mt-6 w-full">
             <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <span className="text-2xl">🌡️</span>
               <div className="text-xl font-bold text-gray-800 dark:text-white">{currentSensor.temperature}°C</div>
               <div className="text-xs text-gray-100">Temperature</div>
             </div>
             <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <span className="text-2xl">💨</span>
               <div className="text-xl font-bold text-gray-800 dark:text-white">{currentSensor.humidity}%</div>
               <div className="text-xs text-gray-100">Humidity</div>
             </div>

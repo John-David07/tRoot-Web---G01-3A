@@ -35,7 +35,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  if (loading) return <div className="text-center py-8">Loading sensor data...</div>;
+  if (loading) return <div className="text-center py-8 text-white">Loading sensor data...</div>;
   if (error) return <div className="text-center py-8 text-red-500">Error: {error}</div>;
   if (!data) return <div className="text-center py-8">No data available</div>;
 

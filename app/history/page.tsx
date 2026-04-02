@@ -107,7 +107,7 @@ export default function HistoryPage() {
     setHistory(parsedHistory);
   }, [selectedSensor, allData]); // Re-run when selectedSensor changes
 
-  if (loading) return <div className="text-center py-8">Loading history...</div>;
+  if (loading) return <div className="text-center py-8 text-white">Loading history...</div>;
 
   const getCondition = (value: number) => {
     if (value > 80) return { label: 'Wet', color: 'text-blue-600 bg-blue-50' };

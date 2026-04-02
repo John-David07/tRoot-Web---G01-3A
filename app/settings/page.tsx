@@ -99,7 +99,7 @@ export default function SettingsPage() {
             </div>
             <div className="flex justify-between py-2">
               <span className="text-gray-600">AI Model</span>
-              <span className="font-medium text-gray-900">Gemini 2.0 Flash</span>
+              <span className="font-medium text-gray-900">Gemini 2.5 Flash lite</span>
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ export function Sidebar() {
 
   const navItems = [
     { name: 'Home', path: '/', icon: '🏠' },
+    { name: 'Sensors', path: '/sensors', icon: '📊' },
     { name: 'History', path: '/history', icon: '📅' },
     { name: 'Settings', path: '/settings', icon: '⚙️' },
   ];

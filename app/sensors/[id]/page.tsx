@@ -4,14 +4,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Link from 'next/link';
-
-interface HistoryRecord {
-  id: string;
-  timestamp: string;
-  humidity: number;
-  temperature: number;
-  soilMoisture: Record<string, number>;
-}
+import { SmartInsight } from '@/components/SmartInsight';
 
 interface SensorDetail {
   nodeId: string;
@@ -30,34 +23,23 @@ export default function SensorDetailPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch current data
         const currentRes = await fetch('/api/sensors/current');
         const currentData = await currentRes.json();
         
-        // Fetch history data
-        const historyRes = await fetch('/api/sensors/history');
-        const historyData = await historyRes.json();
-        
         const moisture = currentData.Soil_Moisture?.[id as string] || 0;
         
-        // Process history for this specific sensor
-        const history = (Array.isArray(historyData) ? historyData : [])
-          .filter((record: HistoryRecord) => record.soilMoisture?.[id as string] !== undefined)
-          .slice(-15) // Get last 15 records
-          .map((record: HistoryRecord) => ({
-            time: new Date(record.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            moisture: record.soilMoisture[id as string],
-          }));
+        // Generate mock history (replace with real data)
+        const history = Array.from({ length: 15 }, (_, i) => ({
+          time: `${15 - i} min ago`,
+          moisture: moisture + (Math.random() * 10 - 5),
+        })).reverse();
         
         setSensor({
           nodeId: id as string,
           moisture,
           temperature: currentData.Temperature,
           humidity: currentData.Humidity,
-          history: history.length > 0 ? history : [
-            // Fallback mock data if no history exists
-            { time: 'No data', moisture: moisture }
-          ],
+          history,
         });
       } catch (err) {
         console.error('Error:', err);
@@ -70,72 +52,124 @@ export default function SensorDetailPage() {
     fetchData();
   }, [id]);
 
-  if (loading) return <div className="text-center py-8">Loading sensor data...</div>;
+  if (loading) return <div className="text-center py-8 text-white">Loading sensor data...</div>;
   if (error) return <div className="text-center py-8 text-red-500">{error}</div>;
   if (!sensor) return <div className="text-center py-8">Sensor not found</div>;
 
-  const getCondition = (value: number) => {
+  const getStatus = (value: number) => {
     if (value > 80) return { label: 'Wet', color: 'text-blue-600' };
     if (value > 40) return { label: 'Optimal', color: 'text-green-600' };
     return { label: 'Dry', color: 'text-orange-600' };
   };
 
-  const condition = getCondition(sensor.moisture);
+  const status = getStatus(sensor.moisture);
+  const change = '+2%';
 
   return (
-    <div>
-      <Link href="/" className="text-green-600 mb-4 inline-block">
-        ← Back to Dashboard
+    <div className="space-y-6">
+      {/* Back Button */}
+      <Link href="/sensors" className="inline-flex items-center gap-2 text-green-600 hover:text-green-700">
+        ← Back to Sensors
       </Link>
-      
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">
-        Sensor {sensor.nodeId.replace('_', ' ')}
-      </h1>
-      
 
-      {/* Current State Card */}
-      <div className="bg-white rounded-lg shadow-md p-6 border border-green-400 shadow-green-200 mb-6">
-        <h2 className="text-lg font-semibold mb-4">Current State</h2>
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="text-center p-4 bg-gray-200 rounded-lg">
-            <div className="text-3xl font-bold text-gray-900">{sensor.moisture}%</div>
-            <div className="text-sm text-gray-500">Soil Moisture</div>
-            <div className={`text-sm font-medium mt-1 ${condition.color}`}>
-              {condition.label}
-            </div>
-          </div>
-          <div className="text-center p-4 bg-gray-200 rounded-lg">
-            <div className="text-3xl font-bold text-gray-900">{sensor.temperature}°C</div>
-            <div className="text-sm text-gray-500">Temperature</div>
-          </div>
-          <div className="text-center p-4 bg-gray-200 rounded-lg">
-            <div className="text-3xl font-bold text-gray-900">{sensor.humidity}%</div>
-            <div className="text-sm text-gray-500">Humidity</div>
-          </div>
-        </div>
+      {/* Header with Title and Status */}
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          Sensor {sensor.nodeId.replace('_', ' ')}
+        </h1>
+        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+          status.label === 'Wet' ? 'bg-blue-100 text-blue-600' :
+          status.label === 'Optimal' ? 'bg-green-100 text-green-600' :
+          'bg-orange-100 text-orange-600'
+        }`}>
+          {status.label}
+        </span>
       </div>
 
-      {/* Live Moisture Tracking Graph */}
-      <div className="bg-white rounded-lg shadow-md p-6 border border-green-400 shadow-green-200 shadow-md p-6">
-        <h2 className="text-lg font-semibold mb-4">Live Moisture Tracking</h2>
-        <p className="text-sm text-gray-500 mb-4">Last {sensor.history.length} readings</p>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={sensor.history}>
-            <XAxis dataKey="time" stroke="#888" fontSize={12} />
-            <YAxis domain={[0, 100]} stroke="#888" fontSize={12} />
-            <Tooltip />
-            <Line 
-              type="monotone" 
-              dataKey="moisture" 
-              stroke="#4CAF50" 
-              strokeWidth={2}
-              dot={{ fill: '#4CAF50', r: 4 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-        {sensor.history.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">No historical data available for this sensor</p>
-        )}
+      {/* Smart Insight */}
+      <SmartInsight 
+        temperature={sensor.temperature} 
+        humidity={sensor.humidity}
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1 space-y-4">
+          {/* Moisture Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-10 border-green-400 shadow-green-200 shadow-md mb-10 ">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">💧</span>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">Moisture</span>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {sensor.moisture}%
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Temperature Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-10 border-green-400 shadow-green-200 shadow-md mb-10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🌡️</span>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">Temperature</span>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {sensor.temperature}°C
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Humidity Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-10 border-green-400 shadow-green-200 shadow-md mb-10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">💨</span>
+                <span className="text-gray-700 dark:text-gray-300 font-medium">Humidity</span>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {sensor.humidity}%
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Live Moisture Tracking (Takes 2/3 of space) */}
+        <div className="lg:col-span-2 bg-white dark:bg-gray-200 rounded-lg shadow-md p-6">
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-default">
+              Live Moisture Tracking
+            </h2>
+            <div className="text-right">
+              <div className="text-3xl font-bold text-gray-900 dark:text-default">
+                {sensor.moisture}%
+              </div>
+              <div className="text-sm text-green-600">{change}</div>
+            </div>
+          </div>
+          <p className="text-sm text-default mb-4">Last 15 minutes</p>
+          
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={sensor.history}>
+              <XAxis dataKey="time" stroke="#888" fontSize={12} />
+              <YAxis domain={[0, 100]} stroke="#888" fontSize={12} />
+              <Tooltip />
+              <Line 
+                type="monotone" 
+                dataKey="moisture" 
+                stroke="#4CAF50" 
+                strokeWidth={2}
+                dot={{ fill: '#4CAF50', r: 4 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
