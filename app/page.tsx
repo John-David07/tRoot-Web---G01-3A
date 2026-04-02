@@ -1,23 +1,59 @@
-import { Suspense } from 'react';
-import DashboardClient from '@/components/DashboardClient';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { PlantCarousel } from '@/components/PlantCarousel';
+import { SmartInsight } from '@/components/SmartInsight';
+
+interface SensorData {
+  Humidity: number;
+  Temperature: number;
+  Soil_Moisture: Record<string, number>;
+}
 
 export default function Home() {
-  return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Plant Monitoring Dashboard
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Real-time sensor data from your plants
-          </p>
-        </header>
+  const [data, setData] = useState<SensorData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-        <Suspense fallback={<div>Loading dashboard...</div>}>
-          <DashboardClient />
-        </Suspense>
-      </div>
-    </main>
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch('/api/sensors/current');
+        if (!res.ok) throw new Error('Failed to fetch');
+        const data = await res.json();
+        setData(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) return <div className="text-center py-8">Loading sensor data...</div>;
+  if (error) return <div className="text-center py-8 text-red-500">Error: {error}</div>;
+  if (!data) return <div className="text-center py-8">No data available</div>;
+
+  // Transform sensor data for carousel
+  const sensors = Object.entries(data.Soil_Moisture || {}).map(([nodeId, value]) => ({
+    nodeId,
+    moisture: value,
+    temperature: data.Temperature,
+    humidity: data.Humidity,
+  }));
+
+  return (
+    <div className="space-y-6">
+      <SmartInsight 
+        temperature={data.Temperature} 
+        humidity={data.Humidity}
+      />
+      
+      <PlantCarousel sensors={sensors} />
+    </div>
   );
 }

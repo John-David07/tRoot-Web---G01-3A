@@ -77,8 +77,7 @@ export default function SensorDetailPage() {
   const getCondition = (value: number) => {
     if (value > 80) return { label: 'Wet', color: 'text-blue-600' };
     if (value > 40) return { label: 'Optimal', color: 'text-green-600' };
-    if (value > 10) return { label: 'Dry', color: 'text-orange-600' };
-    return { label: 'Critical', color: 'text-red-600' };
+    return { label: 'Dry', color: 'text-orange-600' };
   };
 
   const condition = getCondition(sensor.moisture);

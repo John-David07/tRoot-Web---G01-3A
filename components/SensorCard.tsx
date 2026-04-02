@@ -19,15 +19,10 @@ export function SensorCard({ nodeId, moisture, temperature, humidity }: SensorCa
       color: 'text-green-600 bg-green-100',
       barColor: 'bg-green-600'
     };
-    if (value > 10) return { 
+    return { 
       label: 'Dry', 
       color: 'text-orange-600 bg-orange-100',
       barColor: 'bg-orange-600'
-    };
-    return { 
-      label: 'Critical', 
-      color: 'text-red-600 bg-red-100',
-      barColor: 'bg-red-600'
     };
   };
 
