@@ -42,10 +42,9 @@ const FALLBACK_PLANTS: Plant[] = [
   }
 ];
 
-const CACHE_KEY = 'plant_recommendations';
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
 export function PlantRecommendations({ moisture, temperature, humidity }: PlantRecommendationsProps) {
+  const CACHE_KEY = `plant_recommendations_${moisture}_${temperature}_${humidity}`;
+  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
   const [recommendations, setRecommendations] = useState<Plant[]>(FALLBACK_PLANTS);
   const [loading, setLoading] = useState(true);
   const [isAiMode, setIsAiMode] = useState(true);
@@ -58,22 +57,32 @@ export function PlantRecommendations({ moisture, temperature, humidity }: PlantR
         // Check cache first
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
-          const cachedData: CachedRecommendations = JSON.parse(cached);
-          const isExpired = Date.now() - cachedData.timestamp > CACHE_DURATION;
-          const conditionsChanged = 
-            cachedData.conditions.moisture !== moisture ||
-            cachedData.conditions.temperature !== temperature ||
-            cachedData.conditions.humidity !== humidity;
-          
-          // Use cache if not expired AND conditions haven't changed
-          if (!isExpired && !conditionsChanged) {
-            console.log('Using cached recommendations');
-            setRecommendations(cachedData.data);
-            setIsAiMode(true);
-            setLoading(false);
-            return;
+          try {
+            const cachedData: CachedRecommendations = JSON.parse(cached);
+
+            const isExpired = Date.now() - cachedData.timestamp > CACHE_DURATION;
+            const isClose = (a: number, b: number, tolerance = 2) =>
+              Math.abs(a - b) <= tolerance;
+
+            const conditionsChanged =
+              !isClose(cachedData.conditions.moisture, moisture) ||
+              !isClose(cachedData.conditions.temperature, temperature) ||
+              !isClose(cachedData.conditions.humidity, humidity);
+
+            if (!isExpired && !conditionsChanged) {
+              // ✅ Use cache immediately (NO loading state)
+              setRecommendations(cachedData.data);
+              setIsAiMode(true);
+              setLoading(false);
+              return; // 🚨 important: stop here
+            }
+          } catch {
+            localStorage.removeItem(CACHE_KEY);
           }
         }
+
+        // ❗ Only reaches here if cache is invalid
+        setLoading(true);
         
         // Fetch new recommendations
         const res = await fetch('/api/recommendations', {

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { PlantCarousel } from '@/components/PlantCarousel';
 import { SmartInsight } from '@/components/SmartInsight';
+import { NotificationButton } from '@/components/NotificationButton';
 
 interface SensorData {
   Humidity: number;
@@ -48,6 +49,12 @@ export default function Home() {
 
   return (
     <div className="space-y-6">
+    <div className="flex justify-between items-center mb-6">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        Dashboard
+      </h1>
+      <NotificationButton />
+    </div>
       <SmartInsight 
         temperature={data.Temperature} 
         humidity={data.Humidity}
