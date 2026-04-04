@@ -132,7 +132,7 @@ export default function HistoryPage() {
   return (
     <div className="bg-app min-h-screen">
       <div className="container mx-auto px-4 py-8 pb-24">
-        <h1 className="text-2xl font-bold text-gray-200 mb-2">Sensor Reading History</h1>
+        <h1 className="text-2xl font-bold text-gray-200 mb-2">History</h1>
         <p className="text-gray-100 mb-6">Recent Readings</p>
 
         {/* Filter */}

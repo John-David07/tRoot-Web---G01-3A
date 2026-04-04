@@ -36,7 +36,7 @@ export function Sidebar() {
         {/* Logo / Header */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           {!isCollapsed ? (
-            <h2 className="text-lg font-bold text-gray-800 dark:text-white">Plant Monitor</h2>
+            <h2 className="text-lg font-bold text-gray-800 dark:text-white">Soil Monitor</h2>
           ) : (
             <div className="w-8 h-8 bg-green-500 rounded-full mx-auto"></div>
           )}

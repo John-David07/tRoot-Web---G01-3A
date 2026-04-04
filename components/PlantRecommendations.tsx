@@ -16,7 +16,6 @@ interface PlantRecommendationsProps {
 
 interface CachedRecommendations {
   data: Plant[];
-  timestamp: number;
   conditions: {
     moisture: number;
     temperature: number;
@@ -44,7 +43,6 @@ const FALLBACK_PLANTS: Plant[] = [
 
 export function PlantRecommendations({ moisture, temperature, humidity }: PlantRecommendationsProps) {
   const CACHE_KEY = `plant_recommendations_${moisture}_${temperature}_${humidity}`;
-  const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
   const [recommendations, setRecommendations] = useState<Plant[]>(FALLBACK_PLANTS);
   const [loading, setLoading] = useState(true);
   const [isAiMode, setIsAiMode] = useState(true);
@@ -60,29 +58,33 @@ export function PlantRecommendations({ moisture, temperature, humidity }: PlantR
           try {
             const cachedData: CachedRecommendations = JSON.parse(cached);
 
-            const isExpired = Date.now() - cachedData.timestamp > CACHE_DURATION;
+            // ONLY check if conditions changed
             const isClose = (a: number, b: number, tolerance = 2) =>
               Math.abs(a - b) <= tolerance;
 
-            const conditionsChanged =
-              !isClose(cachedData.conditions.moisture, moisture) ||
-              !isClose(cachedData.conditions.temperature, temperature) ||
-              !isClose(cachedData.conditions.humidity, humidity);
+            const conditionsUnchanged =
+              isClose(cachedData.conditions.moisture, moisture) &&
+              isClose(cachedData.conditions.temperature, temperature) &&
+              isClose(cachedData.conditions.humidity, humidity);
 
-            if (!isExpired && !conditionsChanged) {
-              // ✅ Use cache immediately (NO loading state)
+            if (conditionsUnchanged) {
+              // ✅ Use cache - NO API call
+              console.log('Using cached recommendations (conditions unchanged)');
               setRecommendations(cachedData.data);
               setIsAiMode(true);
               setLoading(false);
-              return; // 🚨 important: stop here
+              return;
+            } else {
+              // Conditions changed - remove old cache
+              localStorage.removeItem(CACHE_KEY);
             }
           } catch {
             localStorage.removeItem(CACHE_KEY);
           }
         }
 
-        // ❗ Only reaches here if cache is invalid
-        setLoading(true);
+        //if conditions actually changed OR no cache exists
+        console.log('Conditions changed or no cache - fetching new recommendations');
         
         // Fetch new recommendations
         const res = await fetch('/api/recommendations', {
@@ -93,27 +95,40 @@ export function PlantRecommendations({ moisture, temperature, humidity }: PlantR
         
         const data = await res.json();
         
-        // Check if we got valid AI recommendations
+        // Check if valid AI recommendations
         if (res.ok && data.recommendations && Array.isArray(data.recommendations) && data.recommendations.length > 0) {
           setRecommendations(data.recommendations);
           setIsAiMode(true);
           
-          // Save to cache
+          // Save to cache (no timestamp needed)
           const cacheData: CachedRecommendations = {
             data: data.recommendations,
-            timestamp: Date.now(),
             conditions: { moisture, temperature, humidity }
           };
           localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
         } else {
-          // API returned error - use fallback
+          // API returned error - use fallback, but don't cache it
           setRecommendations(FALLBACK_PLANTS);
           setIsAiMode(false);
         }
       } catch (err) {
         console.error('Failed to fetch recommendations:', err);
-        setRecommendations(FALLBACK_PLANTS);
-        setIsAiMode(false);
+        
+        // Try to use cache even if expired, before falling back
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          try {
+            const cachedData: CachedRecommendations = JSON.parse(cached);
+            setRecommendations(cachedData.data);
+            setIsAiMode(true);
+          } catch {
+            setRecommendations(FALLBACK_PLANTS);
+            setIsAiMode(false);
+          }
+        } else {
+          setRecommendations(FALLBACK_PLANTS);
+          setIsAiMode(false);
+        }
       } finally {
         setLoading(false);
       }
