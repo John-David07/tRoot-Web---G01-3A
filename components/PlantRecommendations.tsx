@@ -25,19 +25,19 @@ interface CachedRecommendations {
 
 const FALLBACK_PLANTS: Plant[] = [
   {
-    name: "Snake Plant",
-    scientificName: "Sansevieria trifasciata",
-    reason: "Extremely adaptable and tolerates a wide range of conditions."
-  },
-  {
-    name: "ZZ Plant",
-    scientificName: "Zamioculcas zamiifolia",
-    reason: "Survives in low light and irregular watering schedules."
-  },
-  {
-    name: "Pothos",
+    name: "Pothos (Biliran)",
     scientificName: "Epipremnum aureum",
-    reason: "Very forgiving plant that adapts to most indoor environments."
+    reason: "Very common in Philippine homes, thrives in local tropical conditions."
+  },
+  {
+    name: "Snake Plant (Sansevieria)",
+    scientificName: "Dracaena trifasciata",
+    reason: "Popular in the Philippines, tolerates low light and irregular watering."
+  },
+  {
+    name: "Peace Lily (San Francisco)",
+    scientificName: "Spathiphyllum wallisii",
+    reason: "Commonly sold in local markets, thrives in warm humid conditions."
   }
 ];
 
