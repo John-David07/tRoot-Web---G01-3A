@@ -28,11 +28,47 @@ export default function SensorDetailPage() {
         
         const moisture = currentData.Soil_Moisture?.[id as string] || 0;
         
-        // Generate mock history (replace with real data)
-        const history = Array.from({ length: 15 }, (_, i) => ({
-          time: `${15 - i} min ago`,
-          moisture: moisture + (Math.random() * 10 - 5),
-        })).reverse();
+                // Fetch real history data
+        const historyRes = await fetch('/api/sensors/history');
+        const historyData = await historyRes.json();
+
+        // Parse real history for this sensor
+        let history: Array<{ time: string; moisture: number }> = [];
+
+        // Find Soil_Sensor data
+        const soilSensorData = Array.isArray(historyData) 
+          ? historyData.find((item: any) => item.id === 'Soil_Sensor')
+          : null;
+
+        if (soilSensorData && soilSensorData[id as string]) {
+          const sensorHistory = soilSensorData[id as string];
+          history = Object.entries(sensorHistory)
+            .slice(-15) // Last 15 readings
+            .map(([pushId, value]) => {
+              let moistureValue = 0;
+              if (typeof value === 'number') {
+                moistureValue = value;
+              } else if (value && typeof value === 'object' && 'value' in value) {
+                moistureValue = (value as { value: number }).value;
+              }
+              
+              // Format time from pushId
+              let timeStr = 'recent';
+              if (pushId.length >= 8 && pushId[0] === '-') {
+                const hexPart = pushId.substring(1, 9);
+                try {
+                  const timeValue = parseInt(hexPart, 16);
+                  if (!isNaN(timeValue)) {
+                    const date = new Date(timeValue);
+                    timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                  }
+                } catch (e) {}
+              }
+              
+              return { time: timeStr, moisture: moistureValue };
+            })
+            .reverse(); // Oldest to newest for graph
+        }
         
         setSensor({
           nodeId: id as string,
@@ -63,7 +99,17 @@ export default function SensorDetailPage() {
   };
 
   const status = getStatus(sensor.moisture);
-  const change = '+2%';
+  // Calculate change from history (last vs second last)
+  const getChange = () => {
+    if (sensor.history.length < 2) return '0%';
+    const last = sensor.history[sensor.history.length - 1]?.moisture || 0;
+    const previous = sensor.history[sensor.history.length - 2]?.moisture || 0;
+    const diff = last - previous;
+    if (diff > 0) return `+${diff}%`;
+    if (diff < 0) return `${diff}%`;
+    return '0%';
+  };
+  const change = getChange();
 
   return (
     <div className="space-y-6">
@@ -140,8 +186,8 @@ export default function SensorDetailPage() {
           </div>
         </div>
 
-        {/* Right Column - Live Moisture Tracking (Takes 2/3 of space) */}
-        <div className="lg:col-span-2 bg-white dark:bg-gray-200 rounded-lg shadow-md p-6">
+        {/* Right Column */}
+        <div className="lg:col-span-2 bg-white dark:bg-gray-100 rounded-lg shadow-md p-6">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-default">
               Live Moisture Tracking

@@ -15,24 +15,20 @@ export function Sidebar() {
     { name: 'Settings', path: '/settings', icon: '⚙️' },
   ];
 
+  // Toggle sidebar when clicked anywhere on it
+  const handleSidebarClick = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
     <>
-      {/* Sidebar */}
+      {/* Sidebar - click anywhere to collapse/expand */}
       <div
-        className={`fixed left-0 top-0 h-full bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 z-40 border-green-400 shadow-green-200 shadow-md ${
+        onClick={handleSidebarClick}
+        className={`fixed left-0 top-0 h-full bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 z-40 cursor-pointer border-green-400 shadow-green-200 shadow-md ${
           isCollapsed ? 'w-16' : 'w-64'
         }`}
       >
-        {/* Collapse Button */}
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="absolute -right-3 top-6 bg-white dark:bg-gray-700 rounded-full p-1 shadow-md border border-gray-200 dark:border-gray-600"
-        >
-          <span className="text-gray-600 dark:text-gray-300">
-            {isCollapsed ? '→' : '←'}
-          </span>
-        </button>
-
         {/* Logo / Header */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           {!isCollapsed ? (
@@ -42,12 +38,13 @@ export function Sidebar() {
           )}
         </div>
 
-        {/* Navigation Items */}
+        {/* Navigation Items - prevent clicks from bubbling to sidebar when collapsed */}
         <nav className="mt-8">
           {navItems.map((item) => (
             <Link
               key={item.path}
               href={item.path}
+              onClick={(e) => e.stopPropagation()}
               className={`flex items-center px-4 py-3 transition-colors ${
                 pathname === item.path
                   ? 'bg-green-50 dark:bg-green-900/30 text-green-600'
@@ -61,7 +58,7 @@ export function Sidebar() {
         </nav>
       </div>
 
-      {/* Content Spacer - pushes main content right */}
+      {/* Content Spacer */}
       <div className={`transition-all duration-300 ${isCollapsed ? 'ml-16' : 'ml-64'}`} />
     </>
   );
