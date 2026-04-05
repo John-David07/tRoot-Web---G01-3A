@@ -40,9 +40,6 @@ export default function RootLayout({
         <div className="flex min-h-screen">
           <Sidebar />
           <main className="flex-1 p-6">
-            <div className="flex justify-end mb-4">
-              <NotificationButton />
-            </div>
             {children}
           </main>
         </div>
