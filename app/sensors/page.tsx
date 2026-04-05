@@ -54,7 +54,7 @@ export default function SensorsPage() {
   }, []);
 
   const getStatus = (moisture: number) => {
-    if (moisture > 80) return { label: 'Wet', color: 'text-blue-600', 'bgColor': 'bg-blue-100' };
+    if (moisture > 80) return { label: 'saturated', color: 'text-blue-600', 'bgColor': 'bg-blue-100' };
     if (moisture > 40) return { label: 'Optimal', color: 'text-green-600', 'bgColor': 'bg-green-100' };
     return { label: 'Dry', color: 'text-orange-600', 'bgColor': 'bg-orange-100' };
   };
@@ -121,7 +121,7 @@ export default function SensorsPage() {
               <option value="moisture">Moisture Level</option>
               <option value="temperature">Temperature</option>
               <option value="humidity">Humidity</option>
-              <option value="status">Status (Wet/Optimal/Dry)</option>
+              <option value="status">Status (saturated/Optimal/Dry)</option>
             </select>
           </div>
 
@@ -165,7 +165,7 @@ export default function SensorsPage() {
                 className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
                 <option value="all">All Status</option>
-                <option value="Wet">Wet</option>
+                <option value="saturated">saturated</option>
                 <option value="Optimal">Optimal</option>
                 <option value="Dry">Dry</option>
               </select>

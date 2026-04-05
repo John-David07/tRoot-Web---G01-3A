@@ -10,7 +10,7 @@ interface SensorCardProps {
 export function SensorCard({ nodeId, moisture, temperature, humidity }: SensorCardProps) {
   const getCondition = (value: number) => {
     if (value > 80) return { 
-      label: 'Wet', 
+      label: 'saturated', 
       color: 'text-blue-600 bg-blue-100',
       barColor: 'bg-blue-500'
     };

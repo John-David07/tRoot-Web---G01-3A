@@ -93,7 +93,7 @@ export default function SensorDetailPage() {
   if (!sensor) return <div className="text-center py-8">Sensor not found</div>;
 
   const getStatus = (value: number) => {
-    if (value > 80) return { label: 'Wet', color: 'text-blue-600' };
+    if (value > 80) return { label: 'saturated', color: 'text-blue-600' };
     if (value > 40) return { label: 'Optimal', color: 'text-green-600' };
     return { label: 'Dry', color: 'text-orange-600' };
   };
@@ -124,7 +124,7 @@ export default function SensorDetailPage() {
           Sensor {sensor.nodeId.replace('_', ' ')}
         </h1>
         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-          status.label === 'Wet' ? 'bg-blue-100 text-blue-600' :
+          status.label === 'saturated' ? 'bg-blue-100 text-blue-600' :
           status.label === 'Optimal' ? 'bg-green-100 text-green-600' :
           'bg-orange-100 text-orange-600'
         }`}>

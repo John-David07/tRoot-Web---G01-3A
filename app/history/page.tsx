@@ -259,7 +259,7 @@ export default function HistoryPage() {
   if (loading) return <div className="text-center text-white py-8">Loading history...</div>;
 
   const getCondition = (value: number) => {
-    if (value > 80) return { label: 'Wet', color: 'text-blue-600 bg-blue-50' };
+    if (value > 80) return { label: 'saturated', color: 'text-blue-600 bg-blue-50' };
     if (value > 40) return { label: 'Optimal', color: 'text-green-600 bg-green-50' };
     return { label: 'Dry', color: 'text-orange-600 bg-orange-50' };
   };
@@ -422,7 +422,7 @@ export default function HistoryPage() {
                             {sensor.nodeId.replace('_', ' ')}
                           </h3>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            status.label === 'Wet' ? 'bg-blue-100 text-blue-600' :
+                            status.label === 'saturated' ? 'bg-blue-100 text-blue-600' :
                             status.label === 'Optimal' ? 'bg-green-100 text-green-600' :
                             'bg-orange-100 text-orange-600'
                           }`}>
