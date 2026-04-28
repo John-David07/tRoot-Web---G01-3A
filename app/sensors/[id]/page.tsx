@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import Link from 'next/link';
 import { SmartInsight } from '@/components/SmartInsight';
+import { PlantCare } from '@/components/PlantCare';
 
 interface SensorDetail {
   nodeId: string;
@@ -64,10 +65,9 @@ export default function SensorDetailPage() {
                   }
                 } catch (e) {}
               }
-              
               return { time: timeStr, moisture: moistureValue };
             })
-            .reverse(); // Oldest to newest for graph
+            .reverse();
         }
         
         setSensor({
@@ -217,6 +217,9 @@ export default function SensorDetailPage() {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* AI Plant Care Assistant */}
+      <PlantCare />
     </div>
   );
 }
