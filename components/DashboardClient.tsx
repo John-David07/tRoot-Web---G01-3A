@@ -15,6 +15,7 @@ export default function DashboardClient() {
   const [data, setData] = useState<SensorData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,16 +32,21 @@ export default function DashboardClient() {
     };
 
     fetchData();
-    // Refresh every 30 seconds
     const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleRefreshRecommendations = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
   if (loading) return <div className="text-center py-8">Loading sensor data...</div>;
   if (error) return <div className="text-center py-8 text-red-500">Error: {error}</div>;
   if (!data) return <div className="text-center py-8">No data available</div>;
 
   const nodes = Object.entries(data.Soil_Moisture || {});
+  const firstNodeId = nodes[0]?.[0] || 'Node_1';
+  const currentMoisture = data.Soil_Moisture?.[firstNodeId] || 0;
 
   return (
     <div className="space-y-6">
@@ -62,9 +68,11 @@ export default function DashboardClient() {
       </div>
 
       <PlantRecommendations 
-        moisture={data.Soil_Moisture?.Node_1 || 0}  // Use first sensor's moisture
+        key={refreshKey}
+        moisture={currentMoisture}
         temperature={data.Temperature}
         humidity={data.Humidity}
+        onRefresh={handleRefreshRecommendations}
       />
     </div>
   );

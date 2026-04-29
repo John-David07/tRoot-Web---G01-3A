@@ -69,4 +69,4 @@ export function SensorCard({ nodeId, moisture, temperature, humidity }: SensorCa
       </div>
     </Link>
   );
-}
+} 

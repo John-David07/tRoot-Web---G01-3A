@@ -5,8 +5,10 @@ export async function POST(request: Request) {
   try {
     const { moisture, temperature, humidity } = await request.json();
 
+    console.log('📦 API received - Moisture:', moisture, '%, Temp:', temperature, '°C, Humidity:', humidity, '%');
+
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash-lite" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `You are a plant recommendation expert for Philippine home gardening. Based on the following environmental conditions, recommend 3 indoor plants that are:
 
@@ -40,6 +42,8 @@ Example plants that are acceptable: Monstera, San Francisco (Peace Lily), Pothos
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
     
+    console.log('📦 Raw AI Response:', responseText);
+    
     let recommendations;
     try {
       recommendations = JSON.parse(responseText);
@@ -51,6 +55,8 @@ Example plants that are acceptable: Monstera, San Francisco (Peace Lily), Pothos
         throw new Error('Could not parse AI response');
       }
     }
+
+    console.log('📦 Parsed recommendations:', JSON.stringify(recommendations, null, 2));
 
     return NextResponse.json({ recommendations });
   } catch (error) {
