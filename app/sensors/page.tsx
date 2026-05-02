@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { CircularProgress } from '@/components/CircularProgress';
 
 interface SensorData {
   nodeId: string;
