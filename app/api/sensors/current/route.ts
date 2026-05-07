@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getDatabase, ref, get } from 'firebase/database';
+import { ref, get } from 'firebase/database';
 import { database } from '@/lib/firebase/client';
 
 export async function GET() {
   try {
-    // Fetch current sensor data from Firebase
-    const currentDataRef = ref(database, 'Current_Data');
+    const currentDataRef = ref(database, 'CurrentData');
     const snapshot = await get(currentDataRef);
     
     if (!snapshot.exists()) {
@@ -17,8 +16,20 @@ export async function GET() {
 
     const data = snapshot.val();
     
-    // Return the data
-    return NextResponse.json(data);
+    // Transform to match DashboardClient expected format
+    const transformedData = {
+      Humidity: data.humidity || 0,
+      Temperature: data.temperature || 0,
+      Soil_Moisture: {
+        Node_1: data.soil_moisture?.node_1 || 0,
+        Node_2: data.soil_moisture?.node_2 || 0,
+        Node_3: data.soil_moisture?.node_3 || 0,
+        Node_4: data.soil_moisture?.node_4 || 0,
+        Node_5: data.soil_moisture?.node_5 || 0
+      }
+    };
+    
+    return NextResponse.json(transformedData);
   } catch (error) {
     console.error('API Error:', error);
     return NextResponse.json(
