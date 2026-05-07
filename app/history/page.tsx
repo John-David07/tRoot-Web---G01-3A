@@ -373,7 +373,7 @@ export default function HistoryPage() {
                         <div className="flex justify-between items-start mb-3">
                           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                             {sensor.nodeId.replace('_', ' ')}
-                          </h3>
+          </h3>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                             status.label === 'saturated' ? 'bg-blue-100 text-blue-600' :
                             status.label === 'Optimal' ? 'bg-green-100 text-green-600' :
