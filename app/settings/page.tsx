@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function SettingsPage() {
+  useEffect(() => {
+    document.title = 'Soil Monitor | Settings';
+  }, []);
   // Handle reset data
   const handleResetData = () => {
     if (confirm('Are you sure? This will clear all local storage settings.')) {

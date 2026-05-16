@@ -17,6 +17,10 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    document.title = 'Soil Monitor | Dashboard';
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch('/api/sensors/current');

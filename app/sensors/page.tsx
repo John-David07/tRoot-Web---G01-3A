@@ -26,6 +26,10 @@ export default function SensorsPage() {
   const [filterStatus, setFilterStatus] = useState('all');
 
   useEffect(() => {
+    document.title = 'Soil Monitor | Sensors';
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch('/api/sensors/current');

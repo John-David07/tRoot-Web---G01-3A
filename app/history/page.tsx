@@ -34,6 +34,10 @@ export default function HistoryPage() {
   const [endDate, setEndDate] = useState('');
 
   useEffect(() => {
+    document.title = 'Soil Monitor | History';
+  }, []);
+
+  useEffect(() => {
     const fetchHistory = async () => {
       try {
         const res = await fetch('/api/sensors/history');
