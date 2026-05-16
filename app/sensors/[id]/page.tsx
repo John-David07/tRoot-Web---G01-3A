@@ -21,6 +21,16 @@ export default function SensorDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Update page title when component mounts
+  useEffect(() => {
+    if (id) {
+      document.title = `Soil Monitor | Sensor ${id}`;
+    }
+    return () => {
+      document.title = 'Soil Monitor | Sensors';
+    };
+  }, [id]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
