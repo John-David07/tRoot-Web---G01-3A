@@ -23,7 +23,7 @@ export function PlantCarousel({ sensors }: PlantCarouselProps) {
     
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % sensors.length);
-    }, 6000); // 6 seconds
+    }, 6000);
 
     return () => clearInterval(interval);
   }, [isAutoPlaying, sensors.length]);
@@ -39,19 +39,19 @@ export function PlantCarousel({ sensors }: PlantCarouselProps) {
         {/* Left Side - Sensor Card */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 flex flex-col items-center border-green-400 shadow-green-200">
           <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-            {currentSensor.nodeId.replace('_', ' ')} - Plant {currentSensor.nodeId.replace('Node_', '')}
+            {currentSensor.nodeId.replace('', ' ')} - Plant {currentSensor.nodeId.replace('Node', '')}
           </h3>
           <CircularProgress value={currentSensor.moisture} label="Moisture" />
           <div className="grid grid-cols-2 gap-4 mt-6 w-full">
             <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <span className="text-2xl">🌡️</span>
               <div className="text-xl font-bold text-gray-800 dark:text-white">{currentSensor.temperature}°C</div>
-              <div className="text-xs text-gray-100">Temperature</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">Temperature</div>
             </div>
             <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <span className="text-2xl">💨</span>
               <div className="text-xl font-bold text-gray-800 dark:text-white">{currentSensor.humidity}%</div>
-              <div className="text-xs text-gray-100">Humidity</div>
+              <div className="text-xs text-gray-500 dark:text-gray-400">Humidity</div>
             </div>
           </div>
         </div>
@@ -74,13 +74,12 @@ export function PlantCarousel({ sensors }: PlantCarouselProps) {
             onClick={() => {
               setIsAutoPlaying(false);
               setCurrentIndex(index);
-              // Resume auto-play after 10 seconds of inactivity
               setTimeout(() => setIsAutoPlaying(true), 10000);
             }}
             className={`transition-all duration-300 rounded-full ${
               index === currentIndex
                 ? 'w-8 h-2 bg-green-500'
-                : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
+                : 'w-2 h-2 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
             }`}
           />
         ))}
@@ -94,7 +93,7 @@ export function PlantCarousel({ sensors }: PlantCarouselProps) {
             setCurrentIndex((prev) => (prev - 1 + sensors.length) % sensors.length);
             setTimeout(() => setIsAutoPlaying(true), 10000);
           }}
-          className="px-4 py-2 bg-gray-200 dark:bg-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
         >
           ← Previous
         </button>
@@ -104,7 +103,7 @@ export function PlantCarousel({ sensors }: PlantCarouselProps) {
             setCurrentIndex((prev) => (prev + 1) % sensors.length);
             setTimeout(() => setIsAutoPlaying(true), 10000);
           }}
-          className="px-4 py-2 bg-gray-200 dark:bg-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
         >
           Next →
         </button>
@@ -112,7 +111,7 @@ export function PlantCarousel({ sensors }: PlantCarouselProps) {
 
       {/* Auto-play indicator */}
       {isAutoPlaying && (
-        <p className="text-center text-xs text-gray-400 mt-2">
+        <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-2">
           Auto-cycling • Next in 6 seconds
         </p>
       )}
