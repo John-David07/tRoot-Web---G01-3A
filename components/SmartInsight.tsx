@@ -24,14 +24,25 @@ export function SmartInsight({ temperature, humidity }: SmartInsightProps) {
   };
 
   const insight = getInsight();
-  const colors = insight.type === 'success' 
-    ? 'bg-green-50 border-green-200 text-green-700'
-    : 'bg-yellow-50 border-yellow-200 text-yellow-700';
+  
+  const bgColor = insight.type === 'success' 
+    ? 'bg-green-50 dark:bg-green-900/20' 
+    : 'bg-yellow-50 dark:bg-yellow-900/20';
+  const textColor = insight.type === 'success' 
+    ? 'text-green-700 dark:text-green-300' 
+    : 'text-yellow-700 dark:text-yellow-300';
+  const borderColor = insight.type === 'success' 
+    ? 'border-green-200 dark:border-green-800' 
+    : 'border-yellow-200 dark:border-yellow-800';
 
   return (
-    <div className={`rounded-lg shadow-md p-4 border border-green-400 shadow-green-200 border p-4 ${colors}`}>
-      <h3 className="font-semibold mb-1">Smart Insight</h3>
-      <p className="text-sm">{insight.message}</p>
+    <div className={`rounded-lg border ${borderColor} p-4 ${bgColor}`}>
+      <h3 className={`font-semibold mb-1 ${textColor}`}>
+        Smart Insight
+      </h3>
+      <p className="text-sm text-gray-700 dark:text-gray-300">
+        {insight.message}
+      </p>
     </div>
   );
 }
