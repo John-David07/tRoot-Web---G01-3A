@@ -204,11 +204,17 @@ export default function HistoryPage() {
   }, [history, selectedSensor, moistureMin, moistureMax, startDate, endDate]);
 
   const clearFilters = () => {
-    setSelectedSensor('all');
-    setMoistureMin('');
-    setMoistureMax('');
-    setStartDate('');
-    setEndDate('');
+    // Show confirmation before clearing
+    if (window.confirm('Clear all filters? This will reset your view.')) {
+      setSelectedSensor('all');
+      setMoistureMin('');
+      setMoistureMax('');
+      setStartDate('');
+      setEndDate('');
+      
+      // Show success feedback
+      alert('Filters have been cleared.');
+    }
   };
 
   const handleMouseEnter = (e: React.MouseEvent, change: number, previous: number | undefined) => {
